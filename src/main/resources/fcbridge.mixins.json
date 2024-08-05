@@ -1,0 +1,19 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.forgecraft.mods.bridge.mixins",
+  "refmap": "ftbhacks.neo.refmap.json",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+  ],
+  "client": [
+    "client.MinecraftMixin",
+    "client.toasts.ToastComponentMixin",
+    "client.toasts.TutorialToastsMixin"
+  ],
+  "server": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
