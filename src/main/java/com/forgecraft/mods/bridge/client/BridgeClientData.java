@@ -5,6 +5,7 @@ import com.forgecraft.mods.bridge.structs.TickTimeHolder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,13 +17,15 @@ public enum BridgeClientData {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BridgeClientData.class);
 
-    private HashMap<ResourceLocation, TickTimeHolder> serverTps = new HashMap<>();
-
-    public void setServerTps(Map<ResourceLocation, TickTimeHolder> serverTps) {
-        this.serverTps = new HashMap<>(serverTps);
+    @Nullable
+    private TPSPacket serverTps;
+    
+    public void setServerTps(@Nullable TPSPacket packet) {
+        this.serverTps = packet;
     }
 
-    public HashMap<ResourceLocation, TickTimeHolder> getServerTps() {
+    @Nullable
+    public TPSPacket getServerTps() {
         return serverTps;
     }
 
@@ -33,10 +36,10 @@ public enum BridgeClientData {
             return;
         }
 
-        connection.send(new TPSPacket(HashMap.newHashMap(0)));
+        connection.send(new TPSPacket());
     }
 
     public void clearServerTps() {
-        serverTps.clear();
+        serverTps = null;
     }
 }

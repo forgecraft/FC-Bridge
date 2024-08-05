@@ -6,6 +6,6 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public class TPSReplyHandler {
     public static void onClient(final TPSPacket data, final IPayloadContext context) {
-        context.enqueueWork(() -> BridgeClientData.INSTANCE.setServerTps(data.dimensionMap()));
+        context.enqueueWork(() -> BridgeClientData.INSTANCE.setServerTps(data));
     }
 }
