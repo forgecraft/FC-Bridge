@@ -48,7 +48,6 @@ public class TPSScreen extends Screen {
 
     private void requestTPSData() {
         BridgeClientData.INSTANCE.requestServerTpsUpdate();
-        System.out.printf("Requested TPS data at %s%n", Instant.now().toString());
     }
 
     private static final int DIMENSION_NAME_WIDTH = 200;
