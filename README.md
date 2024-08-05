@@ -1,25 +1,35 @@
+# FC Bridge
 
-Installation information
-=======
+Our Forgecraft Bridge mod is intended as a small bridge mod that provides essential features for our testing server when we need them.
 
-This template repository can be directly cloned to get you started with a new
-mod. Simply create a new repository cloned from this one, by following the
-instructions provided by [GitHub](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template).
+## Features
 
-Once you have your clone, simply open the repository in the IDE of your choice. The usual recommendation for an IDE is either IntelliJ IDEA or Eclipse.
+### QOL
 
-If at any point you are missing libraries in your IDE, or you've run into problems you can
-run `gradlew --refresh-dependencies` to refresh the local cache. `gradlew clean` to reset everything 
-{this does not affect your code} and then start the process again.
+- Player AFK marker in the tab menu
+  - Configurable in the server config file
 
-Mapping Names:
-============
-By default, the MDK is configured to use the official mapping names from Mojang for methods and fields 
-in the Minecraft codebase. These names are covered by a specific license. All modders should be aware of this
-license. For the latest license text, refer to the mapping file itself, or the reference copy here:
-https://github.com/NeoForged/NeoForm/blob/main/Mojang.md
+### Misc
 
-Additional Resources: 
-==========
-Community Documentation: https://docs.neoforged.net/  
-NeoForged Discord: https://discord.neoforged.net/
+- Ding on login (when `ding` is not present)
+- Time taken to start toast on load complete
+- Toast control for Advancements, Recipes, and Tutorials (When `toastcontrol` is not present)
+
+### Discord
+
+- Discord channel `topic` updating to show specific information about the running server on startup (Server only)
+
+### Commands
+
+- `/fc dev sudo <command>`: Run a command as the server owner
+  - Allowed commands are configured in the server config file
+- `/fc share-location` to share your location
+- `/fc dev spectator` to toggle spectator mode
+- `/fc show {screen}` to show a screen
+  - `tps` brings up a screen that shows the TPS of dims
+  - `client_settings` give control of the toast stuff
+
+## TODO
+
+- [ ] Home commands (with a nice gui)
+- [ ] Inventory snapshotting and restoring
