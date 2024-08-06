@@ -20,19 +20,26 @@ import java.util.HashMap;
 import java.util.Map;
 
 public record TPSPacket(
-    Map<ResourceLocation, TickTimeHolder> dimensionMap
+        Map<ResourceLocation, TickTimeHolder> dimensionMap,
+        TickTimeHolder overall
 ) implements CustomPacketPayload {
     private static final Logger LOGGER = LoggerFactory.getLogger(TPSPacket.class);
 
     public static final Type<TPSPacket> TYPE = new Type<>(Bridge.location("tps_reply"));
 
-    private static final long[] UNLOADED = new long[] { 0 };
+    private static final long[] UNLOADED = new long[]{0};
 
     public static final StreamCodec<FriendlyByteBuf, TPSPacket> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.map(HashMap::new, ResourceLocation.STREAM_CODEC, TickTimeHolder.STEAM_CODEC),
             TPSPacket::dimensionMap,
+            TickTimeHolder.STEAM_CODEC,
+            TPSPacket::overall,
             TPSPacket::new
     );
+
+    public TPSPacket() {
+        this(Map.of(), new TickTimeHolder(0, 0));
+    }
 
     @Override
     public @NotNull Type<? extends CustomPacketPayload> type() {
@@ -48,9 +55,9 @@ public record TPSPacket(
                 return;
             }
 
-            // Find the TPS data for each dimension
+            // Find the TPS data for each dimension and overall
             // Most of this logic is from the Neoforge TPS command
-            Map<ResourceLocation, TickTimeHolder> tpsData = new HashMap<>();
+            Map<ResourceLocation, TickTimeHolder> dimensionData = new HashMap<>();
             for (ServerLevel dimension : server.getAllLevels()) {
                 long[] times = server.getTickTime(dimension.dimension());
 
@@ -58,14 +65,19 @@ public record TPSPacket(
                     times = UNLOADED;
                 }
 
-                double levelTickTime = Stats.meanOf(times) * 1.0E-6D;
+                double levelTickTime = Stats.meanOf(times) / TimeUtil.NANOSECONDS_PER_MILLISECOND;
                 double levelTPS = TimeUtil.MILLISECONDS_PER_SECOND / Math.max(levelTickTime, server.tickRateManager().millisecondsPerTick());
 
-                tpsData.put(dimension.dimension().location(), new TickTimeHolder(levelTickTime, levelTPS));
+                dimensionData.put(dimension.dimension().location(), new TickTimeHolder(levelTickTime, levelTPS));
             }
 
+            long[] times = server.getTickTimesNanos();
+            double overallTickTime = Stats.meanOf(times) / TimeUtil.NANOSECONDS_PER_MILLISECOND;
+            double overallTPS = TimeUtil.MILLISECONDS_PER_SECOND / Math.max(overallTickTime, server.tickRateManager().millisecondsPerTick());
+            TickTimeHolder overallData = new TickTimeHolder(overallTickTime, overallTPS);
+
             // Send the TPS data back to the client
-            context.reply(new TPSPacket(tpsData));
+            context.reply(new TPSPacket(dimensionData, overallData));
         });
     }
 }
