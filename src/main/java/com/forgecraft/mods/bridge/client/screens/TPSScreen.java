@@ -33,6 +33,7 @@ import java.text.DecimalFormat;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
@@ -203,9 +204,10 @@ public class TPSScreen extends Screen {
 
             for (FilledEntry entry : allEntries) {
                 if (search != null && !search.getValue().isEmpty()) {
-                    // Filter based on search value
+                    // Filter based on search value; case-insensitive
+                    final String searchValue = search.getValue().toLowerCase(Locale.ROOT);
                     final String locationName = entry.locationComponent.getString();
-                    if (!locationName.contains(search.getValue())) {
+                    if (!locationName.toLowerCase(Locale.ROOT).contains(searchValue)) {
                         // Does not contain search value -- discard
                         continue;
                     }
