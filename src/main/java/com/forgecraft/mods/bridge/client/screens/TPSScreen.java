@@ -16,8 +16,11 @@ import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.client.gui.layouts.LinearLayout.Orientation;
 import net.minecraft.client.gui.layouts.SpacerElement;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.HoverEvent;
+import net.minecraft.network.chat.HoverEvent.Action;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.util.TimeUtil;
@@ -172,7 +175,7 @@ public class TPSScreen extends Screen {
 
                 for (Map.Entry<ResourceLocation, TickTimeHolder> entry : tps.dimensionMap().entrySet()) {
                     final ResourceLocation location = entry.getKey();
-                    final Component locationComponent = Component.translatableWithFallback(location.toLanguageKey("dimensions"), location.toString());
+                    final Component locationComponent = Component.translatableWithFallback(location.toLanguageKey("dimension"), location.toString());
                     final FilledEntry filledEntry = new FilledEntry(location.toString(), locationComponent, entry.getValue());
                     this.allEntries.add(filledEntry);
                 }
