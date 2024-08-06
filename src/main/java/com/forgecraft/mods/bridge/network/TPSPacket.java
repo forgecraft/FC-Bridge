@@ -65,14 +65,14 @@ public record TPSPacket(
                     times = UNLOADED;
                 }
 
-                double levelTickTime = Stats.meanOf(times) * 1.0E-6D;
+                double levelTickTime = Stats.meanOf(times) / TimeUtil.NANOSECONDS_PER_MILLISECOND;
                 double levelTPS = TimeUtil.MILLISECONDS_PER_SECOND / Math.max(levelTickTime, server.tickRateManager().millisecondsPerTick());
 
                 dimensionData.put(dimension.dimension().location(), new TickTimeHolder(levelTickTime, levelTPS));
             }
 
             long[] times = server.getTickTimesNanos();
-            double overallTickTime = Stats.meanOf(times) * 1.0E-6D;
+            double overallTickTime = Stats.meanOf(times) / TimeUtil.NANOSECONDS_PER_MILLISECOND;
             double overallTPS = TimeUtil.MILLISECONDS_PER_SECOND / Math.max(overallTickTime, server.tickRateManager().millisecondsPerTick());
             TickTimeHolder overallData = new TickTimeHolder(overallTickTime, overallTPS);
 
