@@ -233,6 +233,26 @@ public class TPSScreen extends Screen {
             guiGraphics.drawString(TPSScreen.this.font, Component.literal("Mean TPS").withStyle(ChatFormatting.GRAY), x, y, 0xFFFFFF);
         }
 
+        @Override
+        protected void renderDecorations(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+            if (mouseY < this.getY() || mouseY > this.getBottom()) return;
+
+            final Entry hovered = this.getHovered();
+            if (!(hovered instanceof FilledEntry entry)) return;
+
+            final int index = this.children().indexOf(entry);
+
+            int top = this.getRowTop(index) + 1; // Match padding
+            int left = this.getRowLeft();
+
+            final ScreenRectangle locationRect = ScreenRectangle.of(ScreenAxis.HORIZONTAL,
+                    left, top,
+                    TPSScreen.this.font.width(entry.locationComponent), TPSScreen.this.font.lineHeight);
+            if (locationRect.containsPoint(mouseX, mouseY)) {
+                guiGraphics.renderComponentHoverEffect(TPSScreen.this.font, entry.locationComponent.getStyle(), mouseX, mouseY);
+            }
+        }
+
         abstract static class Entry extends ObjectSelectionList.Entry<Entry> {
         }
 
@@ -305,13 +325,6 @@ public class TPSScreen extends Screen {
                 guiGraphics.drawString(TPSScreen.this.font, meanTickTimeComponent, left, top, 0xFFFFFF);
                 left += MEAN_TICK_TIME_WIDTH + COLUMN_GAP;
                 guiGraphics.drawString(TPSScreen.this.font, meanTPSComponent, left, top, 0xFFFFFF);
-
-                final ScreenRectangle locationRect = ScreenRectangle.of(ScreenAxis.HORIZONTAL,
-                        locationLeft, locationTop,
-                        TPSScreen.this.font.width(locationComponent), TPSScreen.this.font.lineHeight);
-                if (locationRect.containsPoint(mouseX, mouseY)) {
-                    guiGraphics.renderComponentHoverEffect(TPSScreen.this.font, locationComponent.getStyle(), mouseX, mouseY);
-                }
             }
         }
     }
