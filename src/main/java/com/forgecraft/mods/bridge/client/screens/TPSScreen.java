@@ -18,8 +18,10 @@ import net.minecraft.client.gui.layouts.SpacerElement;
 import net.minecraft.client.gui.navigation.ScreenAxis;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.locale.Language;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
@@ -296,7 +298,8 @@ public class TPSScreen extends Screen {
             public void render(@NotNull GuiGraphics guiGraphics, int index, int top, int left, int height, int width,
                                int mouseX, int mouseY, boolean focused, float partialTick) {
                 top += 1; // Add a bit more padding
-                guiGraphics.drawString(TPSScreen.this.font, locationComponent, left, top, 0xFFFFFF);
+                final FormattedText text = TPSScreen.this.font.ellipsize(locationComponent, DIMENSION_NAME_WIDTH);
+                guiGraphics.drawString(TPSScreen.this.font, Language.getInstance().getVisualOrder(text), left, top, 0xFFFFFF);
                 int locationLeft = left, locationTop = top;
                 left += DIMENSION_NAME_WIDTH + COLUMN_GAP;
                 guiGraphics.drawString(TPSScreen.this.font, meanTickTimeComponent, left, top, 0xFFFFFF);
