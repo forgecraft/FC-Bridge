@@ -18,8 +18,10 @@ import net.minecraft.client.gui.layouts.SpacerElement;
 import net.minecraft.client.gui.navigation.ScreenAxis;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.locale.Language;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
@@ -31,6 +33,7 @@ import java.text.DecimalFormat;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
@@ -201,9 +204,10 @@ public class TPSScreen extends Screen {
 
             for (FilledEntry entry : allEntries) {
                 if (search != null && !search.getValue().isEmpty()) {
-                    // Filter based on search value
+                    // Filter based on search value; case-insensitive
+                    final String searchValue = search.getValue().toLowerCase(Locale.ROOT);
                     final String locationName = entry.locationComponent.getString();
-                    if (!locationName.contains(search.getValue())) {
+                    if (!locationName.toLowerCase(Locale.ROOT).contains(searchValue)) {
                         // Does not contain search value -- discard
                         continue;
                     }
@@ -229,6 +233,26 @@ public class TPSScreen extends Screen {
             guiGraphics.drawString(TPSScreen.this.font, Component.literal("Mean tick time").withStyle(ChatFormatting.GRAY), x, y, 0xFFFFFF);
             x += MEAN_TICK_TIME_WIDTH + COLUMN_GAP;
             guiGraphics.drawString(TPSScreen.this.font, Component.literal("Mean TPS").withStyle(ChatFormatting.GRAY), x, y, 0xFFFFFF);
+        }
+
+        @Override
+        protected void renderDecorations(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+            if (mouseY < this.getY() || mouseY > this.getBottom()) return;
+
+            final Entry hovered = this.getHovered();
+            if (!(hovered instanceof FilledEntry entry)) return;
+
+            final int index = this.children().indexOf(entry);
+
+            int top = this.getRowTop(index) + 1; // Match padding
+            int left = this.getRowLeft();
+
+            final ScreenRectangle locationRect = ScreenRectangle.of(ScreenAxis.HORIZONTAL,
+                    left, top,
+                    TPSScreen.this.font.width(entry.locationComponent), TPSScreen.this.font.lineHeight);
+            if (locationRect.containsPoint(mouseX, mouseY)) {
+                guiGraphics.renderComponentHoverEffect(TPSScreen.this.font, entry.locationComponent.getStyle(), mouseX, mouseY);
+            }
         }
 
         abstract static class Entry extends ObjectSelectionList.Entry<Entry> {
@@ -296,19 +320,13 @@ public class TPSScreen extends Screen {
             public void render(@NotNull GuiGraphics guiGraphics, int index, int top, int left, int height, int width,
                                int mouseX, int mouseY, boolean focused, float partialTick) {
                 top += 1; // Add a bit more padding
-                guiGraphics.drawString(TPSScreen.this.font, locationComponent, left, top, 0xFFFFFF);
+                final FormattedText text = TPSScreen.this.font.ellipsize(locationComponent, DIMENSION_NAME_WIDTH);
+                guiGraphics.drawString(TPSScreen.this.font, Language.getInstance().getVisualOrder(text), left, top, 0xFFFFFF);
                 int locationLeft = left, locationTop = top;
                 left += DIMENSION_NAME_WIDTH + COLUMN_GAP;
                 guiGraphics.drawString(TPSScreen.this.font, meanTickTimeComponent, left, top, 0xFFFFFF);
                 left += MEAN_TICK_TIME_WIDTH + COLUMN_GAP;
                 guiGraphics.drawString(TPSScreen.this.font, meanTPSComponent, left, top, 0xFFFFFF);
-
-                final ScreenRectangle locationRect = ScreenRectangle.of(ScreenAxis.HORIZONTAL,
-                        locationLeft, locationTop,
-                        TPSScreen.this.font.width(locationComponent), TPSScreen.this.font.lineHeight);
-                if (locationRect.containsPoint(mouseX, mouseY)) {
-                    guiGraphics.renderComponentHoverEffect(TPSScreen.this.font, locationComponent.getStyle(), mouseX, mouseY);
-                }
             }
         }
     }
