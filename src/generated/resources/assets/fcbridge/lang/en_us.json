@@ -7,9 +7,12 @@
   "fc.bridge.fc.bridge.commands.home.remove": "Home [%s] removed!",
   "fc.bridge.fc.bridge.commands.home.size": "Homes: %s",
   "fc.bridge.fc.bridge.commands.home.teleport": "Teleported to home [%s]!",
+  "fc.bridge.fc.bridge.commands.spectator.enter": "%s is now in spectator mode",
+  "fc.bridge.fc.bridge.commands.spectator.exit": "%s is no longer in spectator mode",
   "fc.bridge.fc.bridge.commands.sudo.not_allowed": "You are not allowed to use [%s] with sudo",
   "fc.bridge.fc.bridge.gui.toggle_advancement_toasts": "Toggle Advancement Toasts",
   "fc.bridge.fc.bridge.gui.toggle_recipe_toasts": "Toggle Recipe Toasts",
   "fc.bridge.toast.launch_time": "%s seconds",
-  "fc.bridge.toast.launch_time.title": "Launched in"
+  "fc.bridge.toast.launch_time.title": "Launched in",
+  "sidebar_button.fcbridge.tps": "TPS"
 }

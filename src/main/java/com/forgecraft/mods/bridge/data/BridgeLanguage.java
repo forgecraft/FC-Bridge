@@ -32,6 +32,8 @@ public class BridgeLanguage extends LanguageProvider {
 
         command("spectator.enter", "%s is now in spectator mode");
         command("spectator.exit", "%s is no longer in spectator mode");
+
+        add("sidebar_button.fcbridge.tps", "TPS");
     }
 
     public void gui(String key, String value) {
