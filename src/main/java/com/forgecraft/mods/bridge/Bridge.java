@@ -11,12 +11,14 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
+import net.neoforged.fml.event.lifecycle.FMLLoadCompleteEvent;
+import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.fml.loading.FMLPaths;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.server.ServerAboutToStartEvent;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -51,7 +53,7 @@ public class Bridge {
         modContainer.registerConfig(ModConfig.Type.CLIENT, ClientConfig.SPEC);
         modContainer.registerConfig(ModConfig.Type.SERVER, ServerConfig.SPEC);
 
-        NeoForge.EVENT_BUS.addListener(this::serverAboutToStart);
+        modEventBus.addListener(this::gameReady);
 
         modEventBus.addListener(BridgeNetwork::register);
 
@@ -62,11 +64,14 @@ public class Bridge {
         NeoForge.EVENT_BUS.addListener(BridgeCommands::register);
 
 //        InventorySnapshots.INSTANCE.init(modEventBus);
-        DescriptionUpdater.INSTANCE.init();
     }
 
-    private void serverAboutToStart(final ServerAboutToStartEvent event) {
-        AfkWatcher.INSTANCE.init();
+    @SubscribeEvent
+    private void gameReady(final FMLLoadCompleteEvent event) {
+        if (FMLEnvironment.dist.isDedicatedServer()) {
+            DescriptionUpdater.INSTANCE.init();
+            AfkWatcher.INSTANCE.init();
+        }
     }
 
     @NotNull

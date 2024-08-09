@@ -1,5 +1,7 @@
 package com.forgecraft.mods.bridge.commands;
 
+import com.forgecraft.mods.bridge.storage.ServerStorage;
+import com.forgecraft.mods.bridge.structs.DimensionalPos;
 import com.forgecraft.mods.bridge.utils.lang.BridgeCommon;
 import com.forgecraft.mods.bridge.utils.lang.LanguageKeys;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
@@ -23,14 +25,26 @@ public class SpectatorCommand {
 
                     // Allow admins to enter spectator mode quietly
                     if (!player.hasPermissions(Commands.LEVEL_ADMINS)) {
-                        if (beforeGameMode == GameType.SPECTATOR) {
-                            ctx.getSource().sendSystemMessage(Component.translatable(LanguageKeys.command("spectator.enter")).withStyle(BridgeCommon.WISPER_STYLE));
-                        } else {
-                            ctx.getSource().sendSystemMessage(Component.translatable(LanguageKeys.command("spectator.exit")).withStyle(BridgeCommon.WISPER_STYLE));
-                        }
+                        ctx.getSource().sendSystemMessage(Component.translatable(LanguageKeys.command(beforeGameMode == GameType.SPECTATOR ? "spectator.enter" : "spectator.exit")).withStyle(BridgeCommon.WISPER_STYLE));
+                    }
+
+                    DimensionalPos resetPos = null;
+                    ServerStorage serverData = ServerStorage.getOrCreate(ctx.getSource().getServer());
+
+                    if (beforeGameMode == GameType.SPECTATOR) {
+                        resetPos = serverData.getSpectatorLocation(player.getUUID());
+                    } else {
+                        serverData.setSpectatorLocation(player.getUUID(), DimensionalPos.of(player));
                     }
 
                     player.setGameMode(afterGameMode);
+                    if (resetPos != null) {
+                        serverData.removeSpectatorLocation(player.getUUID());
+                        var level = player.getServer().getLevel(resetPos.dimension());
+                        if (level != null) {
+                            player.teleportTo(level, resetPos.pos().getX(), resetPos.pos().getY(), resetPos.pos().getZ(), player.getYRot(), player.getXRot());
+                        }
+                    }
 
                     return 0;
                 });

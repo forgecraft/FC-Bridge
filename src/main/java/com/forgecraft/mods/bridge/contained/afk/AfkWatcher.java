@@ -1,14 +1,15 @@
 package com.forgecraft.mods.bridge.contained.afk;
 
 import com.forgecraft.mods.bridge.config.ServerConfig;
-import com.google.common.eventbus.Subscribe;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
 
 import java.util.HashMap;
@@ -21,14 +22,12 @@ public enum AfkWatcher {
 
     private final HashMap<UUID, AfkData> afkData = new HashMap<>();
 
-    private boolean initialized = false;
-
     public void init() {
-        if (initialized) {
-            throw new IllegalStateException("AfkWatcher has already been initialized");
-        }
+        NeoForge.EVENT_BUS.addListener(this::onServerStarted);
+    }
 
-        initialized = true;
+    @SubscribeEvent
+    public void onServerStarted(ServerStartedEvent event) {
         if (!ServerConfig.AFK_CHECKER_ENABLED.get()) {
             return;
         }
@@ -37,7 +36,7 @@ public enum AfkWatcher {
         NeoForge.EVENT_BUS.addListener(this::setPlayerTabName);
     }
 
-    @Subscribe
+    @SubscribeEvent
     public void onServerTick(ServerTickEvent.Post event) {
         var ticks = event.getServer().getTickCount();
 
@@ -81,7 +80,7 @@ public enum AfkWatcher {
      * Attempt to apply the AFK tag to the player's tab name if they are AFK, we simply do nothing if they are not AFK
      * as this will allow the following events to do what they need to do
      */
-    @Subscribe
+    @SubscribeEvent
     public void setPlayerTabName(PlayerEvent.TabListNameFormat event) {
         var playerData = afkData.get(event.getEntity().getUUID());
         if (playerData == null) {
