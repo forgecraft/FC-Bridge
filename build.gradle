@@ -76,30 +76,13 @@ configurations {
     runtimeClasspath.extendsFrom localRuntime
 }
 
-dependencies {
-    // Example optional mod dependency with JEI
-    // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime
-    // compileOnly "mezz.jei:jei-${mc_version}-common-api:${jei_version}"
-    // compileOnly "mezz.jei:jei-${mc_version}-neoforge-api:${jei_version}"
-    // We add the full version to localRuntime, not runtimeOnly, so that we do not publish a dependency on it
-    // localRuntime "mezz.jei:jei-${mc_version}-neoforge:${jei_version}"
-
-    // Example mod dependency using a mod jar from ./libs with a flat dir repository
-    // This maps to ./libs/coolmod-${mc_version}-${coolmod_version}.jar
-    // The group id is ignored when searching -- in this case, it is "blank"
-    // implementation "blank:coolmod-${mc_version}:${coolmod_version}"
-
-    // Example mod dependency using a file as dependency
-    // implementation files("libs/coolmod-${mc_version}-${coolmod_version}.jar")
-
-    // Example project dependency using a sister or child project:
-    // implementation project(":myproject")
-
-    // For more info:
-    // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
-    // http://www.gradle.org/docs/current/userguide/dependency_management.html
+repositories {
+    computeReposFromProperties()
 }
 
+dependencies {
+    computeDepsFromProperties()
+}
 
 tasks.withType(ProcessResources).configureEach {
     var replaceProperties = [
@@ -145,3 +128,92 @@ idea {
         downloadJavadoc = true
     }
 }
+
+//#region Pointless Fun
+/**
+ * The following is purely me having fun in gradle. There is no good reason to do this.
+ */
+
+/**
+ * Something just for fun.
+ * Build a set of dependencies from the properties defined in the gradle.properties file.
+ *
+ * The current schema is:
+ * - {type}:{group}:{artifact}:version
+ */
+def computeDepsFromProperties() {
+    def types = [
+            "runtime", "compile", "implementation", "localRuntime"
+    ]
+
+    def typeCorrections = [
+            "runtime"      : "runtimeOnly",
+            "compile"      : "compileOnly",
+            "implementation": "implementation",
+            "localRuntime" : "localRuntime"
+    ]
+
+    def availableProperties = project.properties.findAll {
+        // Find all the properties that start with one of the types
+        types.any { type -> it.key.startsWith(type) }
+    }
+
+    print("Found ${availableProperties.size()} properties to process\n")
+
+    availableProperties.each { key, value ->
+        def parts = key.split(":")
+        if (parts.size() == 4) {
+            def type = parts[0]
+            def group = parts[1]
+            def artifact = parts[2]
+
+            // The version is the value of the property
+            def version = value
+
+            def correctedType = typeCorrections[type]
+
+            print("Adding dependency: ${correctedType} ${group}:${artifact}:${version}\n")
+            project.dependencies.add(correctedType, "${group}:${artifact}:${version}")
+        } else {
+            print("Skipping property ${key} as it does not match the schema\n")
+        }
+    }
+}
+
+/**
+ * Something just for fun.
+ * Build a set of repositories from the properties defined in the gradle.properties file.
+ *
+ * The current schema is:
+ * - repo:{name}=url
+ */
+def computeReposFromProperties() {
+    def availableProperties = project.properties.findAll {
+        // Find all the properties that start with "repo:"
+        it.key.startsWith("repo:")
+    }
+
+    print("Found ${availableProperties.size()} properties to process\n")
+
+    availableProperties.each { key, value ->
+        def parts = key.split(":")
+        if (parts.size() == 2) {
+            def repoName = parts[1]
+
+            // The url is the value of the property
+            def repoUrl = value
+
+            print("Adding repository: ${repoName} ${repoUrl}\n")
+            project.repositories.add(project.repositories.maven { repo ->
+                name repoName
+                url repoUrl
+                content {
+                    includeGroup repoName
+                }
+            })
+        } else {
+            print("Skipping property ${key} as it does not match the schema\n")
+        }
+    }
+}
+//#endregion
