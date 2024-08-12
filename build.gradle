@@ -4,13 +4,36 @@ plugins {
     id 'idea'
     id 'maven-publish'
     id 'net.neoforged.moddev' version '0.1.111'
+    id 'net.neoforged.gradleutils' version '3.0.0'
+    id "me.modmuss50.mod-publish-plugin" version "0.6.3"
+    id "dev.nanite.plugins.insaniam" version "0.2.1-SNAPSHOT"
+}
+
+version = gradleutils.version.toString().replace("v", "")
+
+insaniam {
+    changelog {
+        file = file('CHANGELOG.md')
+        version = project.version
+    }
+}
+
+gradleutils {
+    version {
+        tags {
+            includePrefix("v21.*")
+        }
+        branches {
+            suffixBranch()
+            suffixExemptedBranch('main')
+        }
+    }
 }
 
 tasks.named('wrapper', Wrapper).configure {
     distributionType = Wrapper.DistributionType.BIN
 }
 
-version = mod_version
 group = mod_group_id
 
 repositories {
@@ -94,7 +117,7 @@ tasks.withType(ProcessResources).configureEach {
             mod_id                 : mod_id,
             mod_name               : mod_name,
             mod_license            : mod_license,
-            mod_version            : mod_version,
+            mod_version            : version,
             mod_authors            : mod_authors,
             mod_description        : mod_description
     ]
@@ -105,15 +128,41 @@ tasks.withType(ProcessResources).configureEach {
     }
 }
 
+publishMods {
+    dryRun = providers.environmentVariable("GITHUB_TOKEN").getOrNull() == null
+
+    file = jar.archiveFile
+    version = project.version
+    changelog = insaniamUtils.createChangelog()
+    displayName = "FC Bridge ${project.version}"
+    type = STABLE
+
+    github {
+        repository = "forgecraft/fc-bridge"
+        accessToken = providers.environmentVariable("GITHUB_TOKEN")
+        commitish = providers.environmentVariable("GITHUB_SHA").orElse("dryRun")
+        tagName = providers.environmentVariable("GITHUB_REF_NAME").orElse("dryRun")
+    }
+}
+
 publishing {
     publications {
         register('mavenJava', MavenPublication) {
             from components.java
         }
     }
+
     repositories {
-        maven {
-            url "file://${project.projectDir}/repo"
+        def token = providers.environmentVariable("MAVEN_TOKEN")
+        if (token.isPresent()) {
+            maven {
+                // TODO: change to forgecraft.net
+                url "https://maven.neoforgecraft.com/repository/maven-releases/"
+                credentials {
+                    username = "forgecraft-org"
+                    password = token.get()
+                }
+            }
         }
     }
 }

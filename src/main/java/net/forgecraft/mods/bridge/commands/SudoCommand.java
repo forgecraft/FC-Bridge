@@ -1,7 +1,5 @@
 package net.forgecraft.mods.bridge.commands;
 
-import net.forgecraft.mods.bridge.config.ServerConfig;
-import net.forgecraft.mods.bridge.utils.lang.LanguageKeys;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
@@ -9,6 +7,8 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
+import net.forgecraft.mods.bridge.config.ServerConfig;
+import net.forgecraft.mods.bridge.utils.lang.LanguageKeys;
 import net.minecraft.commands.CommandSource;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -34,10 +34,16 @@ public class SudoCommand {
         if (command.startsWith("/")) command = command.substring(1);
 
         // Ensure it's an allowed command
+        var isAllowed = true;
         for (var allowedCommand : ServerConfig.ALLOWED_SUDO_COMMANDS.get()) {
-            if (!command.startsWith(allowedCommand)) {
-                throw COMMAND_NOT_ALLOWED.create(command);
+            if (command.startsWith(allowedCommand)) {
+                isAllowed = false;
+                break;
             }
+        }
+
+        if (isAllowed) {
+            throw COMMAND_NOT_ALLOWED.create(command);
         }
 
         sudoSourceStack.getServer().getCommands().performPrefixedCommand(sudoSourceStack, command);
@@ -55,6 +61,7 @@ public class SudoCommand {
 
     private static CommandSourceStack createSudoStack(ServerPlayer player) {
         var sudoSource = new SudoCommandSource(player);
+        var sudoPLayer = new SudoServerPlayer(player);
 
         return new CommandSourceStack(
                 sudoSource,
@@ -65,7 +72,7 @@ public class SudoCommand {
                 player.getName().getString(),
                 player.getName(),
                 player.level().getServer(),
-                sudoSource.playerDelegate
+                sudoPLayer
         );
     }
 
@@ -95,5 +102,26 @@ public class SudoCommand {
         public boolean shouldInformAdmins() {
             return true;
         }
+    }
+
+    /**
+     * This is not ideal but it helps bypass issues with spark!
+     * (any anyone else that checks the players permission instead of the source permission)
+     */
+    private static class SudoServerPlayer extends ServerPlayer {
+        private final ServerPlayer playerDelegate;
+
+        public SudoServerPlayer(ServerPlayer player) {
+            super(player.server, (ServerLevel) player.level(), player.getGameProfile(), player.clientInformation());
+            this.playerDelegate = player;
+            this.connection = player.connection;
+        }
+
+        @Override
+        public boolean hasPermissions(int pLevel) {
+            return true;
+        }
+
+
     }
 }

@@ -79,11 +79,45 @@ public enum DescriptionUpdater {
             // Update the description
             sendDiscordReq("/channels/" + channelId, "PATCH", Map.of("topic", description.toString()));
 
-            String updateMessage = "## Server information has been updated\n\n" + description;
-            sendDiscordReq("/channels/" + channelId + "/messages", "POST", Map.of("content", updateMessage, "flags", 1 << 2));
+            String diffString = createDiffFromDesc(originalDescription, description.toString());
+
+            String updateMessage = "## Server information has been updated\n\n" + diffString;
+            sendDiscordReq("/channels/" + channelId + "/messages", "POST", Map.of(
+                    "content", updateMessage,
+                    "flags", 1 << 2,
+                    "components", List.of(
+                            Map.of("type", 1, "components", List.of(
+                                    Map.of("type", 2, "style", 5, "label", "Neoforge (" + neoforgeVersion + ")", "url", NEOFORGE_DOWNLOAD.replace("{version}", neoforgeVersion)),
+                                    Map.of("type", 2, "style", 5, "label", "SPL (" + splDownloadVersion + ")", "url", SPL_DOWNLOAD + splDownloadVersion)
+                            ))
+                    )
+            ));
         } else {
             LOGGER.info("Description is already up to date");
         }
+    }
+
+    private String createDiffFromDesc(String originalDescription, String newDescription) {
+        var diffBuilder = new StringBuilder();
+        diffBuilder.append("```diff\n");
+
+        // Only add the lines that have actually changes so if the line is identical, we skip it
+        var originalLines = originalDescription.split("\n");
+        var newLines = newDescription.split("\n");
+
+        if (originalLines.length != newLines.length) {
+            diffBuilder.append("Description length mismatch\n");
+            return diffBuilder.append("```").toString();
+        }
+
+        for (int i = 0; i < originalLines.length; i++) {
+            if (!originalLines[i].equals(newLines[i])) {
+                diffBuilder.append("- ").append(originalLines[i]).append("\n");
+                diffBuilder.append("+ ").append(newLines[i]).append("\n");
+            }
+        }
+
+        return diffBuilder.append("```").toString();
     }
 
     @Nullable
