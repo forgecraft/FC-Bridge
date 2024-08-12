@@ -1,3 +1,9 @@
+## [21.1.9]
+
+### Changed
+
+- The TPS screen is now sorted using the resource location names of the dimension type (This should group mods)
+
 ## [21.1.8]
 
 ### Fixed

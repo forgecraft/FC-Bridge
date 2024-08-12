@@ -31,11 +31,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.text.DecimalFormat;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 public class TPSScreen extends Screen {
     private static final DecimalFormat TIME_FORMATTER = new DecimalFormat("########0.000");
@@ -176,7 +172,11 @@ public class TPSScreen extends Screen {
                                 TIME_FORMATTER.format(overallHolder.meanTickTime()), TIME_FORMATTER.format(overallHolder.meanTPS())));
                 this.allEntries.add(overall);
 
-                for (Map.Entry<ResourceLocation, TickTimeHolder> entry : tps.dimensionMap().entrySet()) {
+                var sortedDimensionEntrySet = tps.dimensionMap().entrySet().stream()
+                        .sorted(Map.Entry.comparingByKey())
+                        .toList();
+
+                for (Map.Entry<ResourceLocation, TickTimeHolder> entry : sortedDimensionEntrySet) {
                     final ResourceLocation location = entry.getKey();
                     final String locationStr = location.toString();
                     final Component locationComponent = Component.translatableWithFallback(location.toLanguageKey("dimension"), locationStr)
