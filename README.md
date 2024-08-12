@@ -2,6 +2,18 @@
 
 Our Forgecraft Bridge mod is intended as a small bridge mod that provides essential features for our testing server when we need them.
 
+---
+
+> ## Publishing
+> 
+> Builds are published to the following repositories:
+> 
+> `https://maven.forgecraft.net/repository/maven-public/`
+> 
+> `https://github.com/forgecraft/fc-bridge/releases`
+
+---
+
 ## Features
 
 ### QOL
