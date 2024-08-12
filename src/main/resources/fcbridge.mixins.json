@@ -4,7 +4,6 @@
   "package": "net.forgecraft.mods.bridge.mixins",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "BlockEntityMixin"
   ],
   "client": [
     "client.MinecraftMixin",
