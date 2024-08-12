@@ -156,8 +156,8 @@ publishing {
         def token = providers.environmentVariable("MAVEN_TOKEN")
         if (token.isPresent()) {
             maven {
-                // TODO: change to forgecraft.net
-                url "https://maven.neoforgecraft.com/repository/maven-releases/"
+                name = "forgecraft"
+                url = uri("https://maven.neoforgecraft.com/repository/maven-releases/")
                 credentials {
                     username = "forgecraft-org"
                     password = token.get()
