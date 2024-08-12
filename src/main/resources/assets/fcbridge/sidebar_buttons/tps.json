@@ -1,14 +1,11 @@
 {
-  "tps": {
-    "group": "ftblibrary:util",
-    "icon": [
-      "fcbridge:textures/gui/tps_icon.png"
-    ],
-    "click": [
-      "command:/fc dev show TPS"
-    ],
-    "required_mods": [
-      "fcbridge"
-    ]
-  }
+  "icon": [
+    "fcbridge:textures/gui/tps_icon.png"
+  ],
+  "click": [
+    "command:/fc dev show TPS"
+  ],
+  "required_mods": [
+    "fcbridge"
+  ]
 }

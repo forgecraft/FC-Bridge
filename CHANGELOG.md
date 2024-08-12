@@ -1,3 +1,9 @@
+## [21.1.8]
+
+### Fixed
+
+- Fixed the `tps` icon not working for the new version of FTB Lib
+
 ## [21.1.7]
 
 ### Changed
