@@ -4,12 +4,13 @@ plugins {
     id 'idea'
     id 'maven-publish'
     id 'net.neoforged.moddev' version '0.1.111'
-    id 'net.neoforged.gradleutils' version '3.0.0'
     id "me.modmuss50.mod-publish-plugin" version "0.6.3"
     id "dev.nanite.plugins.insaniam" version "0.2.1-SNAPSHOT"
 }
 
-version = gradleutils.version.toString().replace("v", "")
+version = mod_version
+version = insaniamUtils.createModVersion()
+group = mod_group_id
 
 insaniam {
     changelog {
@@ -18,23 +19,9 @@ insaniam {
     }
 }
 
-gradleutils {
-    version {
-        tags {
-            includePrefix("v21.*")
-        }
-        branches {
-            suffixBranch()
-            suffixExemptedBranch('main')
-        }
-    }
-}
-
 tasks.named('wrapper', Wrapper).configure {
     distributionType = Wrapper.DistributionType.BIN
 }
-
-group = mod_group_id
 
 repositories {
     mavenLocal()
@@ -94,7 +81,6 @@ neoForge {
 
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
-
 configurations {
     runtimeClasspath.extendsFrom localRuntime
 }
@@ -141,7 +127,7 @@ publishMods {
         repository = "forgecraft/fc-bridge"
         accessToken = providers.environmentVariable("GITHUB_TOKEN")
         commitish = providers.environmentVariable("GITHUB_SHA").orElse("dryRun")
-        tagName = "v${project.version}"
+        tagName = providers.environmentVariable("GITHUB_REF_NAME").orElse("dryRun")
     }
 }
 

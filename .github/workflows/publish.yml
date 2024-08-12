@@ -2,8 +2,8 @@ name: 'Build'
 
 on:
   push:
-    branches:
-      - main
+    tags:
+      - 'v*'
 
 concurrency:
   group: ci-build-${{ github.ref }}
