@@ -29,12 +29,12 @@ public class ShareLocationCommand {
 
         BlockPos blockPos = player.blockPosition();
         var text = player.getDisplayName().copy().append(" is at ")
-                .setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tp " + player.getName().getString() + " " + blockPos.getX() + " " + blockPos.getY() + " " + blockPos.getZ())))
+                .setStyle(Style.EMPTY.withClickEvent(new ClickEvent.RunCommand("/tp " + player.getName().getString() + " " + blockPos.getX() + " " + blockPos.getY() + " " + blockPos.getZ())))
                 .append(Component.literal("[x: " + blockPos.getX() + " y: " + blockPos.getY() + " z: " + blockPos.getZ() + "]").withStyle(ChatFormatting.GOLD))
                 .append(Component.literal(" in "))
                 .append(Component.literal(player.level().dimension().location().toString()).withStyle(ChatFormatting.GRAY));
 
-        player.getServer().getPlayerList().broadcastSystemMessage(text, false);
+        player.level().getServer().getPlayerList().broadcastSystemMessage(text, false);
         return 0;
     }
 }

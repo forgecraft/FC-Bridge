@@ -1,10 +1,9 @@
 plugins {
     id 'java-library'
-    id 'eclipse'
     id 'idea'
     id 'maven-publish'
-    id 'net.neoforged.moddev' version '0.1.111'
-    id "me.modmuss50.mod-publish-plugin" version "0.6.3"
+    id 'net.neoforged.moddev' version '2.0.115'
+    id "me.modmuss50.mod-publish-plugin" version "1.0.0"
     id "dev.nanite.plugins.insaniam" version "0.2.1-SNAPSHOT"
 }
 
@@ -60,7 +59,7 @@ neoForge {
         }
 
         data {
-            data()
+            clientData()
 
             programArguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
         }
@@ -86,11 +85,13 @@ configurations {
 }
 
 repositories {
-    computeReposFromProperties()
+    mavenCentral()
+    maven {
+        url = "https://libraries.minecraft.net/"
+    }
 }
 
 dependencies {
-    computeDepsFromProperties()
 }
 
 tasks.withType(ProcessResources).configureEach {
@@ -163,92 +164,3 @@ idea {
         downloadJavadoc = true
     }
 }
-
-//#region Pointless Fun
-/**
- * The following is purely me having fun in gradle. There is no good reason to do this.
- */
-
-/**
- * Something just for fun.
- * Build a set of dependencies from the properties defined in the gradle.properties file.
- *
- * The current schema is:
- * - {type}:{group}:{artifact}:version
- */
-def computeDepsFromProperties() {
-    def types = [
-            "runtime", "compile", "implementation", "localRuntime"
-    ]
-
-    def typeCorrections = [
-            "runtime"      : "runtimeOnly",
-            "compile"      : "compileOnly",
-            "implementation": "implementation",
-            "localRuntime" : "localRuntime"
-    ]
-
-    def availableProperties = project.properties.findAll {
-        // Find all the properties that start with one of the types
-        types.any { type -> it.key.startsWith(type) }
-    }
-
-    print("Found ${availableProperties.size()} properties to process\n")
-
-    availableProperties.each { key, value ->
-        def parts = key.split(":")
-        if (parts.size() == 4) {
-            def type = parts[0]
-            def group = parts[1]
-            def artifact = parts[2]
-
-            // The version is the value of the property
-            def version = value
-
-            def correctedType = typeCorrections[type]
-
-            print("Adding dependency: ${correctedType} ${group}:${artifact}:${version}\n")
-            project.dependencies.add(correctedType, "${group}:${artifact}:${version}")
-        } else {
-            print("Skipping property ${key} as it does not match the schema\n")
-        }
-    }
-}
-
-/**
- * Something just for fun.
- * Build a set of repositories from the properties defined in the gradle.properties file.
- *
- * The current schema is:
- * - repo:{name}=url
- */
-def computeReposFromProperties() {
-    def availableProperties = project.properties.findAll {
-        // Find all the properties that start with "repo:"
-        it.key.startsWith("repo:")
-    }
-
-    print("Found ${availableProperties.size()} properties to process\n")
-
-    availableProperties.each { key, value ->
-        def parts = key.split(":")
-        if (parts.size() == 2) {
-            def repoName = parts[1]
-
-            // The url is the value of the property
-            def repoUrl = value
-
-            print("Adding repository: ${repoName} ${repoUrl}\n")
-            project.repositories.add(project.repositories.maven { repo ->
-                name repoName
-                url repoUrl
-                content {
-                    includeGroup repoName
-                }
-            })
-        } else {
-            print("Skipping property ${key} as it does not match the schema\n")
-        }
-    }
-}
-//#endregion

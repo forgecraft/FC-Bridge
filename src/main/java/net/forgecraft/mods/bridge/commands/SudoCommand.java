@@ -67,7 +67,7 @@ public class SudoCommand {
                 sudoSource,
                 player.position(),
                 player.getRotationVector(),
-                (ServerLevel) player.level(),
+                player.level(),
                 Commands.LEVEL_OWNERS,
                 player.getName().getString(),
                 player.getName(),
@@ -90,12 +90,12 @@ public class SudoCommand {
 
         @Override
         public boolean acceptsSuccess() {
-            return this.playerDelegate.acceptsSuccess();
+            return this.playerDelegate.commandSource().acceptsSuccess();
         }
 
         @Override
         public boolean acceptsFailure() {
-            return this.playerDelegate.acceptsFailure();
+            return this.playerDelegate.commandSource().acceptsFailure();
         }
 
         @Override
@@ -112,7 +112,7 @@ public class SudoCommand {
         private final ServerPlayer playerDelegate;
 
         public SudoServerPlayer(ServerPlayer player) {
-            super(player.server, (ServerLevel) player.level(), player.getGameProfile(), player.clientInformation());
+            super(player.level().getServer(), player.level(), player.getGameProfile(), player.clientInformation());
             this.playerDelegate = player;
             this.connection = player.connection;
         }

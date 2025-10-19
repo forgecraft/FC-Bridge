@@ -33,7 +33,7 @@ public enum FeatureBadWordRemover {
 
     @Subscribe
     public void beforePlayerMessageSend(ServerChatEvent event) {
-        var server = event.getPlayer().getServer();
+        var server = event.getPlayer().level().getServer();
         if (server == null) {
             return;
         }

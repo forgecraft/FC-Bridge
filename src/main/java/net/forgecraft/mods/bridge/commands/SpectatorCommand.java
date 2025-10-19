@@ -10,6 +10,8 @@ import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.GameType;
 
+import java.util.Set;
+
 /**
  * Wrapper around the normal gamemode functionality but locked to just the spectator mode.
  * <p>
@@ -40,9 +42,9 @@ public class SpectatorCommand {
                     player.setGameMode(afterGameMode);
                     if (resetPos != null) {
                         serverData.removeSpectatorLocation(player.getUUID());
-                        var level = player.getServer().getLevel(resetPos.dimension());
+                        var level = player.level().getServer().getLevel(resetPos.dimension());
                         if (level != null) {
-                            player.teleportTo(level, resetPos.pos().getX(), resetPos.pos().getY(), resetPos.pos().getZ(), player.getYRot(), player.getXRot());
+                            player.teleportTo(level, resetPos.pos().getX(), resetPos.pos().getY(), resetPos.pos().getZ(), Set.of(), player.getYRot(), player.getXRot(), false);
                         }
                     }
 

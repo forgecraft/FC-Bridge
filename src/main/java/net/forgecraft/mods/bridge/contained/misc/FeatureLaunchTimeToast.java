@@ -29,6 +29,6 @@ public class FeatureLaunchTimeToast {
                 Component.translatable("fc.bridge.toast.launch_time", secondsString)
         );
 
-        ClientUtils.getMinecraft().ifPresent(minecraft -> minecraft.getToasts().addToast(toast));
+        ClientUtils.getMinecraft().ifPresent(minecraft -> minecraft.getToastManager().addToast(toast));
     }
 }

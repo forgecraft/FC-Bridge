@@ -4,7 +4,6 @@ import net.forgecraft.mods.bridge.client.network.ShowScreenReplyHandler;
 import net.forgecraft.mods.bridge.client.network.TPSReplyHandler;
 import com.google.common.eventbus.Subscribe;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
-import net.neoforged.neoforge.network.handling.DirectionalPayloadHandler;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
 public class BridgeNetwork {
@@ -13,12 +12,11 @@ public class BridgeNetwork {
         final PayloadRegistrar registrar = event.registrar("1");
 
         registrar.playBidirectional(
-                TPSPacket.TYPE,
-                TPSPacket.STREAM_CODEC,
-                new DirectionalPayloadHandler<>(
-                        TPSReplyHandler::onClient,
-                        TPSPacket::onServer
-                ));
+            TPSPacket.TYPE,
+            TPSPacket.STREAM_CODEC,
+            TPSPacket::onServer,
+            TPSReplyHandler::onClient
+        );
 
         registrar.playToClient(
                 ShowScreenPacket.TYPE,

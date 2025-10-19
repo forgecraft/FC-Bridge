@@ -49,7 +49,7 @@ public record TPSPacket(
     public void onServer(final IPayloadContext context) {
         context.enqueueWork(() -> {
             // Get the server
-            MinecraftServer server = context.player().getServer();
+            MinecraftServer server = context.player().level().getServer();
             if (server == null) {
                 LOGGER.error("Server is null");
                 return;

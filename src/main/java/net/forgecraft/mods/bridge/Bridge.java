@@ -68,7 +68,7 @@ public class Bridge {
 
     @SubscribeEvent
     private void gameReady(final FMLLoadCompleteEvent event) {
-        if (FMLEnvironment.dist.isDedicatedServer()) {
+        if (FMLEnvironment.getDist().isDedicatedServer()) {
             DescriptionUpdater.INSTANCE.init();
             AfkWatcher.INSTANCE.init();
         }

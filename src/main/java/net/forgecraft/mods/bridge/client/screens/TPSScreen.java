@@ -18,6 +18,7 @@ import net.minecraft.client.gui.layouts.SpacerElement;
 import net.minecraft.client.gui.navigation.ScreenAxis;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.locale.Language;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
@@ -69,11 +70,11 @@ public class TPSScreen extends Screen {
         // Header information
         final LinearLayout header = contentContainer.addChild(new LinearLayout(this.width, 0, Orientation.HORIZONTAL));
         header.addChild(SpacerElement.width(leftPadding));
-        header.addChild(new StringWidget(DIMENSION_NAME_WIDTH, font.lineHeight, Component.literal("Dimension name").withStyle(ChatFormatting.UNDERLINE), this.font).alignLeft());
+        header.addChild(new StringWidget(DIMENSION_NAME_WIDTH, font.lineHeight, Component.literal("Dimension name").withStyle(ChatFormatting.UNDERLINE), this.font));
         header.addChild(SpacerElement.width(COLUMN_GAP));
-        header.addChild(new StringWidget(MEAN_TICK_TIME_WIDTH, font.lineHeight, Component.literal("Mean tick time").withStyle(ChatFormatting.UNDERLINE), this.font).alignLeft());
+        header.addChild(new StringWidget(MEAN_TICK_TIME_WIDTH, font.lineHeight, Component.literal("Mean tick time").withStyle(ChatFormatting.UNDERLINE), this.font));
         header.addChild(SpacerElement.width(COLUMN_GAP));
-        header.addChild(new StringWidget(MEAN_TPS_WIDTH, font.lineHeight, Component.literal("Mean TPS").withStyle(ChatFormatting.UNDERLINE), this.font).alignLeft());
+        header.addChild(new StringWidget(MEAN_TPS_WIDTH, font.lineHeight, Component.literal("Mean TPS").withStyle(ChatFormatting.UNDERLINE), this.font));
 
         // The actual list
         contentContainer.addChild(SpacerElement.height(4));
@@ -180,7 +181,7 @@ public class TPSScreen extends Screen {
                     final ResourceLocation location = entry.getKey();
                     final String locationStr = location.toString();
                     final Component locationComponent = Component.translatableWithFallback(location.toLanguageKey("dimension"), locationStr)
-                            .withStyle(style -> style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(locationStr))));
+                            .withStyle(style -> style.withHoverEvent(new HoverEvent.ShowText(Component.literal(locationStr))));
                     final FilledEntry filledEntry = new FilledEntry(locationStr, locationComponent, entry.getValue());
                     this.allEntries.add(filledEntry);
                 }
@@ -226,35 +227,6 @@ public class TPSScreen extends Screen {
             return this.width - ROW_PADDING;
         }
 
-        @Override
-        protected void renderHeader(@NotNull GuiGraphics guiGraphics, int x, int y) {
-            guiGraphics.drawString(TPSScreen.this.font, Component.literal("Dimension name").withStyle(ChatFormatting.GRAY), x, y, 0xFFFFFF);
-            x += DIMENSION_NAME_WIDTH + COLUMN_GAP;
-            guiGraphics.drawString(TPSScreen.this.font, Component.literal("Mean tick time").withStyle(ChatFormatting.GRAY), x, y, 0xFFFFFF);
-            x += MEAN_TICK_TIME_WIDTH + COLUMN_GAP;
-            guiGraphics.drawString(TPSScreen.this.font, Component.literal("Mean TPS").withStyle(ChatFormatting.GRAY), x, y, 0xFFFFFF);
-        }
-
-        @Override
-        protected void renderDecorations(GuiGraphics guiGraphics, int mouseX, int mouseY) {
-            if (mouseY < this.getY() || mouseY > this.getBottom()) return;
-
-            final Entry hovered = this.getHovered();
-            if (!(hovered instanceof FilledEntry entry)) return;
-
-            final int index = this.children().indexOf(entry);
-
-            int top = this.getRowTop(index) + 1; // Match padding
-            int left = this.getRowLeft();
-
-            final ScreenRectangle locationRect = ScreenRectangle.of(ScreenAxis.HORIZONTAL,
-                    left, top,
-                    TPSScreen.this.font.width(entry.locationComponent), TPSScreen.this.font.lineHeight);
-            if (locationRect.containsPoint(mouseX, mouseY)) {
-                guiGraphics.renderComponentHoverEffect(TPSScreen.this.font, entry.locationComponent.getStyle(), mouseX, mouseY);
-            }
-        }
-
         abstract static class Entry extends ObjectSelectionList.Entry<Entry> {
         }
 
@@ -265,14 +237,7 @@ public class TPSScreen extends Screen {
             }
 
             @Override
-            public void render(@NotNull GuiGraphics guiGraphics, int index, int top, int left, int height, int width,
-                               int mouseX, int mouseY, boolean focused, float partialTick) {
-                top += 1; // Add a bit more padding
-                guiGraphics.drawCenteredString(TPSScreen.this.font, Component.literal("No data"), TPSScreen.this.width / 2, top, 0xFFFFFF);
-            }
-
-            @Override
-            public boolean mouseClicked(double mouseX, double mouseY, int button) {
+            public boolean mouseClicked(MouseButtonEvent event, boolean notSure) {
                 Entry current = TPSInformationList.this.getFocused();
                 if (current != this && current instanceof ContainerEventHandler handler) {
                     handler.setFocused(null);
@@ -281,6 +246,12 @@ public class TPSScreen extends Screen {
                 TPSInformationList.this.setFocused(this);
                 TPSInformationList.this.setDragging(true);
                 return false;
+            }
+
+            @Override
+            public void renderContent(GuiGraphics guiGraphics, int mouseX, int mouseY, boolean hovering, float partialTick) {
+//                top += 1; // Add a bit more padding
+                guiGraphics.drawCenteredString(TPSScreen.this.font, Component.literal("No data"), TPSScreen.this.width / 2, this.getContentY(), 0xFFFFFF);
             }
         }
 
@@ -317,16 +288,17 @@ public class TPSScreen extends Screen {
             }
 
             @Override
-            public void render(@NotNull GuiGraphics guiGraphics, int index, int top, int left, int height, int width,
-                               int mouseX, int mouseY, boolean focused, float partialTick) {
+            public void renderContent(GuiGraphics guiGraphics, int mouseX, int mouseY, boolean hovering, float partialTick) {
+                int top = this.getContentY();
+                int left = this.getContentX();
+
                 top += 1; // Add a bit more padding
                 final FormattedText text = TPSScreen.this.font.ellipsize(locationComponent, DIMENSION_NAME_WIDTH);
-                guiGraphics.drawString(TPSScreen.this.font, Language.getInstance().getVisualOrder(text), left, top, 0xFFFFFF);
-                int locationLeft = left, locationTop = top;
+                guiGraphics.drawString(TPSScreen.this.font, Language.getInstance().getVisualOrder(text), left, top, 0xFFFFFFFF);
                 left += DIMENSION_NAME_WIDTH + COLUMN_GAP;
-                guiGraphics.drawString(TPSScreen.this.font, meanTickTimeComponent, left, top, 0xFFFFFF);
+                guiGraphics.drawString(TPSScreen.this.font, meanTickTimeComponent, left, top, 0xFFFFFFFF);
                 left += MEAN_TICK_TIME_WIDTH + COLUMN_GAP;
-                guiGraphics.drawString(TPSScreen.this.font, meanTPSComponent, left, top, 0xFFFFFF);
+                guiGraphics.drawString(TPSScreen.this.font, meanTPSComponent, left, top, 0xFFFFFFFF);
             }
         }
     }

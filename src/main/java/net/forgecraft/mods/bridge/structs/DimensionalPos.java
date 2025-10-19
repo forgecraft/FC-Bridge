@@ -1,5 +1,7 @@
 package net.forgecraft.mods.bridge.structs;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
@@ -22,6 +24,14 @@ public record DimensionalPos(
         BlockPos pos,
         Vec2 rotation
 ) {
+    public static final Codec<DimensionalPos> CODEC = RecordCodecBuilder.create(
+            instance -> instance.group(
+                    ResourceKey.codec(Registries.DIMENSION).fieldOf("dimension").forGetter(DimensionalPos::dimension),
+                    BlockPos.CODEC.fieldOf("pos").forGetter(DimensionalPos::pos),
+                    Vec2.CODEC.fieldOf("rotation").forGetter(DimensionalPos::rotation)
+            ).apply(instance, DimensionalPos::new)
+    );
+
     /**
      * Creates a new instance of DimensionalPos from a given player
      * @param player The player
@@ -32,23 +42,6 @@ public record DimensionalPos(
                 player.level().dimension(),
                 player.blockPosition(),
                 player.getRotationVector()
-        );
-    }
-
-    public CompoundTag save() {
-        CompoundTag tag = new CompoundTag();
-        tag.putString("dimension", this.dimension.location().toString());
-        tag.put("pos", NbtUtils.writeBlockPos(this.pos));
-        tag.putFloat("rotationX", this.rotation.x);
-        tag.putFloat("rotationY", this.rotation.y);
-        return tag;
-    }
-
-    public static DimensionalPos load(CompoundTag tag) {
-        return new DimensionalPos(
-                ResourceKey.create(Registries.DIMENSION, ResourceLocation.parse(tag.getString("dimension"))),
-                NbtUtils.readBlockPos(tag, "pos").orElseThrow(),
-                new Vec2(tag.getFloat("rotationX"), tag.getFloat("rotationY"))
         );
     }
 }

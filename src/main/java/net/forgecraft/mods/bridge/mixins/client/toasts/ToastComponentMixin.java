@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
  * This is basically identical to how I archived this same feature in FTB Pack Companion but I have no idea how
  * I would have done it differently.
  */
-@Mixin(ToastComponent.class)
+@Mixin(ToastManager.class)
 public class ToastComponentMixin {
     @Inject(method = "addToast(Lnet/minecraft/client/gui/components/toasts/Toast;)V", at = @At("HEAD"), cancellable = true)
     public void addToast(Toast toast, CallbackInfo ci) {

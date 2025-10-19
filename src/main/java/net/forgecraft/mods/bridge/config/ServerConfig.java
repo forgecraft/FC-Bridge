@@ -21,7 +21,7 @@ public class ServerConfig {
             .comment("A list of commands that can be used with the sudo command")
             .comment("Each command is used with a 'Starts With' check meaning arguments can be used but are not required")
             .comment("Do not include the '/' in the command")
-            .defineList("commands.sudo.allowed", new ArrayList<>(), it -> it instanceof String);
+            .defineList("commands.sudo.allowed", new ArrayList<>(), () -> "", str -> str instanceof String);
 
     public static ModConfigSpec.ConfigValue<String> DISCORD_TOKEN = BUILDER
             .comment("The token for the Discord bot")

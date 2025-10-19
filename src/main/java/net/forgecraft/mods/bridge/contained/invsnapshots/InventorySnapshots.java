@@ -64,8 +64,8 @@ public enum InventorySnapshots {
     }
 
     private void snapshotInventory(Player player) {
-        var inventoryData = player.getInventory().save(new ListTag());
-        LOGGER.info("Player {} has {} items in their inventory", player.getName().getString(), inventoryData.size());
+//        var inventoryData = player.getInventory().save(new ListTag());
+//        LOGGER.info("Player {} has {} items in their inventory", player.getName().getString(), inventoryData.size());
     }
 
     private void cleanupOldSnapshots() {
@@ -105,9 +105,9 @@ public enum InventorySnapshots {
     public void onPlayerDataSaved(PlayerEvent.SaveToFile event) {
         Player entity = event.getEntity();
 
-        var inventoryData = entity.getInventory().save(new ListTag());
+//        var inventoryData = entity.getInventory().save(new ListTag());
 
-        LOGGER.info("Player {} has {} items in their inventory", entity.getName().getString(), inventoryData.size());
+//        LOGGER.info("Player {} has {} items in their inventory", entity.getName().getString(), inventoryData.size());
         // Create a new snapshot
         // Purge old snapshots
 
