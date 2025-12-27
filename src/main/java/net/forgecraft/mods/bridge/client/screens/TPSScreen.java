@@ -15,8 +15,6 @@ import net.minecraft.client.gui.layouts.HeaderAndFooterLayout;
 import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.client.gui.layouts.LinearLayout.Orientation;
 import net.minecraft.client.gui.layouts.SpacerElement;
-import net.minecraft.client.gui.navigation.ScreenAxis;
-import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.locale.Language;
@@ -24,7 +22,7 @@ import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.HoverEvent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.util.TimeUtil;
 import org.jetbrains.annotations.NotNull;
@@ -177,8 +175,8 @@ public class TPSScreen extends Screen {
                         .sorted(Map.Entry.comparingByKey())
                         .toList();
 
-                for (Map.Entry<ResourceLocation, TickTimeHolder> entry : sortedDimensionEntrySet) {
-                    final ResourceLocation location = entry.getKey();
+                for (Map.Entry<Identifier, TickTimeHolder> entry : sortedDimensionEntrySet) {
+                    final Identifier location = entry.getKey();
                     final String locationStr = location.toString();
                     final Component locationComponent = Component.translatableWithFallback(location.toLanguageKey("dimension"), locationStr)
                             .withStyle(style -> style.withHoverEvent(new HoverEvent.ShowText(Component.literal(locationStr))));

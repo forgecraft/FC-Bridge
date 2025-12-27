@@ -1,6 +1,6 @@
 package net.forgecraft.mods.bridge.server.discord;
 
-import net.forgecraft.mods.bridge.config.ServerConfig;
+import net.forgecraft.mods.bridge.config.CommonConfig;
 import com.google.gson.Gson;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.loading.FMLPaths;
@@ -38,7 +38,7 @@ public enum DescriptionUpdater {
     }
 
     private void updateDescription() {
-        String channelId = ServerConfig.DISCORD_CHANNEL_ID.get();
+        String channelId = CommonConfig.DISCORD_CHANNEL_ID.get();
         if (channelId.isEmpty()) {
             LOGGER.info("Discord channel ID is empty, cannot update description");
             return;
@@ -54,9 +54,9 @@ public enum DescriptionUpdater {
         var splDownloadVersion = splVersion.equals("latest") ? "latest" : "tag/v" + splVersion;
 
         StringBuilder description = new StringBuilder();
-        description.append("Connect with ").append(bold(ServerConfig.DISCORD_CONNECT_IP.get())).append(" · ").append("\n");
-        description.append("SPL Url: ").append(bold(ServerConfig.DISCORD_SPL_INFO.get())).append(" · ").append("\n");
-        description.append("Modlist Url: ").append(bold(ServerConfig.DISCORD_MODLIST_INFO.get())).append(" · ").append("\n");
+        description.append("Connect with ").append(bold(CommonConfig.DISCORD_CONNECT_IP.get())).append(" · ").append("\n");
+        description.append("SPL Url: ").append(bold(CommonConfig.DISCORD_SPL_INFO.get())).append(" · ").append("\n");
+        description.append("Modlist Url: ").append(bold(CommonConfig.DISCORD_MODLIST_INFO.get())).append(" · ").append("\n");
         description.append("\n");
         description.append("Minecraft: ").append(bold(minecraftVersion)).append(" · ").append("\n");
         description.append("Neoforge: ").append(bold(neoforgeVersion)).append(" · ").append("\n");
@@ -123,7 +123,7 @@ public enum DescriptionUpdater {
     @Nullable
     private String sendDiscordReq(String endpoint, String method, @Nullable  Object body) {
         // Send the request to discord
-        if (ServerConfig.DISCORD_TOKEN.get().isEmpty()) {
+        if (CommonConfig.DISCORD_TOKEN.get().isEmpty()) {
             LOGGER.info("Discord token is empty, cannot update description");
             return null;
         }
@@ -134,7 +134,7 @@ public enum DescriptionUpdater {
 
             var requestBuilder = HttpRequest.newBuilder()
                     .uri(URI.create("https://discord.com/api/v10" + endpoint))
-                    .header("Authorization", "Bot " + ServerConfig.DISCORD_TOKEN.get());
+                    .header("Authorization", "Bot " + CommonConfig.DISCORD_TOKEN.get());
 
             if (body != null) {
                 requestBuilder.header("Content-Type", "application/json")

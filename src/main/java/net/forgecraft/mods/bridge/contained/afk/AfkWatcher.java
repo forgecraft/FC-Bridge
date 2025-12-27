@@ -1,6 +1,6 @@
 package net.forgecraft.mods.bridge.contained.afk;
 
-import net.forgecraft.mods.bridge.config.ServerConfig;
+import net.forgecraft.mods.bridge.config.CommonConfig;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -28,7 +28,7 @@ public enum AfkWatcher {
 
     @SubscribeEvent
     public void onServerStarted(ServerStartedEvent event) {
-        if (!ServerConfig.AFK_CHECKER_ENABLED.get()) {
+        if (!CommonConfig.AFK_CHECKER_ENABLED.get()) {
             return;
         }
 
@@ -59,7 +59,7 @@ public enum AfkWatcher {
 
         if (data.lastLocation.equals(location) && !data.afk) {
             data.time += 1;
-            data.afk = data.time >= (ServerConfig.AFK_CHECKER_TIME.get() / AFK_CHECK_INTERVAL); // The check runs every 10 seconds so divide by 10
+            data.afk = data.time >= (CommonConfig.AFK_CHECKER_TIME.get() / AFK_CHECK_INTERVAL); // The check runs every 10 seconds so divide by 10
             if (data.afk) {
                 player.refreshTabListName();
             }

@@ -1,6 +1,6 @@
 package net.forgecraft.mods.bridge.structs;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.Optional;
 
@@ -10,17 +10,17 @@ public enum ScreenTypes {
     TPS(location("tps")),
     CLIENT_SETTINGS(location("client_settings"));
 
-    private final ResourceLocation location;
+    private final Identifier location;
 
-    ScreenTypes(ResourceLocation location) {
+    ScreenTypes(Identifier location) {
         this.location = location;
     }
 
-    public ResourceLocation getLocation() {
+    public Identifier getLocation() {
         return location;
     }
 
-    public static Optional<ScreenTypes> fromLocation(ResourceLocation location) {
+    public static Optional<ScreenTypes> fromLocation(Identifier location) {
         for (ScreenTypes type : values()) {
             if (type.location.equals(location)) {
                 return Optional.of(type);

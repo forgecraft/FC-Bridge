@@ -3,12 +3,11 @@ package net.forgecraft.mods.bridge;
 import net.forgecraft.mods.bridge.commands.BridgeCommands;
 import net.forgecraft.mods.bridge.config.ClientConfig;
 import net.forgecraft.mods.bridge.config.CommonConfig;
-import net.forgecraft.mods.bridge.config.ServerConfig;
 import net.forgecraft.mods.bridge.contained.afk.AfkWatcher;
 import net.forgecraft.mods.bridge.network.BridgeNetwork;
 import net.forgecraft.mods.bridge.server.discord.DescriptionUpdater;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.CreativeModeTab;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -49,9 +48,8 @@ public class Bridge {
     public Bridge(IEventBus modEventBus, ModContainer modContainer) {
         fcDataDir = FMLPaths.GAMEDIR.get().resolve("forgecraft");
 
-        modContainer.registerConfig(ModConfig.Type.COMMON, CommonConfig.SPEC);
         modContainer.registerConfig(ModConfig.Type.CLIENT, ClientConfig.SPEC);
-        modContainer.registerConfig(ModConfig.Type.SERVER, ServerConfig.SPEC);
+        modContainer.registerConfig(ModConfig.Type.COMMON, CommonConfig.SPEC);
 
         modEventBus.addListener(this::gameReady);
 
@@ -79,7 +77,7 @@ public class Bridge {
         return fcDataDir;
     }
 
-    public static ResourceLocation location(String path) {
-        return ResourceLocation.fromNamespaceAndPath(MODID, path);
+    public static Identifier location(String path) {
+        return Identifier.fromNamespaceAndPath(MODID, path);
     }
 }

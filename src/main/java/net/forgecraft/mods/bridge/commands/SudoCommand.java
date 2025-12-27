@@ -7,14 +7,14 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
-import net.forgecraft.mods.bridge.config.ServerConfig;
+import net.forgecraft.mods.bridge.config.CommonConfig;
 import net.forgecraft.mods.bridge.utils.lang.LanguageKeys;
 import net.minecraft.commands.CommandSource;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.permissions.PermissionSet;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -35,7 +35,7 @@ public class SudoCommand {
 
         // Ensure it's an allowed command
         var isAllowed = true;
-        for (var allowedCommand : ServerConfig.ALLOWED_SUDO_COMMANDS.get()) {
+        for (var allowedCommand : CommonConfig.ALLOWED_SUDO_COMMANDS.get()) {
             if (command.startsWith(allowedCommand)) {
                 isAllowed = false;
                 break;
@@ -52,7 +52,7 @@ public class SudoCommand {
     }
 
     private static CompletableFuture<Suggestions> suggester(CommandContext<CommandSourceStack> commandSourceStackCommandContext, SuggestionsBuilder suggestionsBuilder) {
-        for (var command : ServerConfig.ALLOWED_SUDO_COMMANDS.get()) {
+        for (var command : CommonConfig.ALLOWED_SUDO_COMMANDS.get()) {
             suggestionsBuilder.suggest(command);
         }
 
@@ -68,7 +68,7 @@ public class SudoCommand {
                 player.position(),
                 player.getRotationVector(),
                 player.level(),
-                Commands.LEVEL_OWNERS,
+                PermissionSet.ALL_PERMISSIONS,
                 player.getName().getString(),
                 player.getName(),
                 player.level().getServer(),
@@ -118,10 +118,8 @@ public class SudoCommand {
         }
 
         @Override
-        public boolean hasPermissions(int pLevel) {
-            return true;
+        public PermissionSet permissions() {
+            return PermissionSet.ALL_PERMISSIONS;
         }
-
-
     }
 }

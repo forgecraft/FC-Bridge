@@ -1,3 +1,9 @@
+## [21.11.0]
+
+### Changed
+
+- Ported to Minecraft 1.21.11
+
 ## [21.10.0]
 
 ### Changed

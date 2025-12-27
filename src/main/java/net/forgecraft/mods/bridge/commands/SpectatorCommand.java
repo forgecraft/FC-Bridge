@@ -8,6 +8,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.permissions.Permissions;
 import net.minecraft.world.level.GameType;
 
 import java.util.Set;
@@ -26,7 +27,7 @@ public class SpectatorCommand {
                     var afterGameMode = beforeGameMode == GameType.SPECTATOR ? GameType.SURVIVAL : GameType.SPECTATOR;
 
                     // Allow admins to enter spectator mode quietly
-                    if (!player.hasPermissions(Commands.LEVEL_ADMINS)) {
+                    if (!player.permissions().hasPermission(Permissions.COMMANDS_ADMIN)) {
                         ctx.getSource().sendSystemMessage(Component.translatable(LanguageKeys.command(beforeGameMode == GameType.SPECTATOR ? "spectator.enter" : "spectator.exit")).withStyle(BridgeCommon.WISPER_STYLE));
                     }
 
