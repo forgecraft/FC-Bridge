@@ -139,14 +139,29 @@ publishing {
         }
     }
 
+//    repositories {
+//        def token = providers.environmentVariable("MAVEN_TOKEN")
+//        if (token.isPresent()) {
+//            maven {
+//                name = "forgecraft"
+//                url = uri("https://maven.forgecraft.net/repository/maven-releases/")
+//                credentials {
+//                    username = "forgecraft-org"
+//                    password = token.get()
+//                }
+//            }
+//        }
+//    }
+
+    // Deploy to github maven
     repositories {
-        def token = providers.environmentVariable("MAVEN_TOKEN")
+        def token = providers.environmentVariable("GITHUB_TOKEN")
         if (token.isPresent()) {
             maven {
-                name = "forgecraft"
-                url = uri("https://maven.forgecraft.net/repository/maven-releases/")
+                name = "GitHubPackages"
+                url = uri("https://maven.pkg.github.com/forgecraft/fc-bridge")
                 credentials {
-                    username = "forgecraft-org"
+                    username = providers.environmentVariable("GITHUB_ACTOR").getOrNull()
                     password = token.get()
                 }
             }
