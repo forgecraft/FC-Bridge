@@ -37,11 +37,11 @@ public class BridgeLanguage extends LanguageProvider {
     }
 
     public void gui(String key, String value) {
-        prefixed(LanguageKeys.gui(key), value);
+        add(LanguageKeys.gui(key), value);
     }
 
     public void command(String key, String value) {
-        prefixed(LanguageKeys.command(key), value);
+        add(LanguageKeys.command(key), value);
     }
 
     public void prefixed(String key, String value) {
