@@ -4,6 +4,7 @@ import net.forgecraft.mods.bridge.commands.BridgeCommands;
 import net.forgecraft.mods.bridge.config.ClientConfig;
 import net.forgecraft.mods.bridge.config.CommonConfig;
 import net.forgecraft.mods.bridge.contained.afk.AfkWatcher;
+import net.forgecraft.mods.bridge.contained.invsnapshots.InventorySnapshots;
 import net.forgecraft.mods.bridge.network.BridgeNetwork;
 import net.forgecraft.mods.bridge.server.discord.DescriptionUpdater;
 import net.minecraft.core.registries.Registries;
@@ -61,7 +62,7 @@ public class Bridge {
 
         NeoForge.EVENT_BUS.addListener(BridgeCommands::register);
 
-//        InventorySnapshots.INSTANCE.init(modEventBus);
+        InventorySnapshots.INSTANCE.init(modEventBus);
     }
 
     @SubscribeEvent

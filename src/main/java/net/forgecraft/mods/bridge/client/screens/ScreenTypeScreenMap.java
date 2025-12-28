@@ -1,6 +1,6 @@
 package net.forgecraft.mods.bridge.client.screens;
 
-import net.forgecraft.mods.bridge.structs.ScreenTypes;
+import net.forgecraft.mods.bridge.structs.ScreenType;
 import net.minecraft.client.gui.screens.Screen;
 
 public class ScreenTypeScreenMap {
@@ -11,7 +11,7 @@ public class ScreenTypeScreenMap {
      * @param type The type of screen to get
      * @return The screen
      */
-    public static Screen getScreen(ScreenTypes type) {
+    public static Screen getScreen(ScreenType type) {
         return switch (type) {
             case TPS -> new TPSScreen();
             case CLIENT_SETTINGS -> new ClientSettingsScreen();
