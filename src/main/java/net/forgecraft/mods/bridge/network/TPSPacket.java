@@ -25,7 +25,7 @@ public record TPSPacket(
 ) implements CustomPacketPayload {
     private static final Logger LOGGER = LoggerFactory.getLogger(TPSPacket.class);
 
-    public static final Type<TPSPacket> TYPE = new Type<>(Bridge.location("tps_reply"));
+    public static final Type<TPSPacket> TYPE = new Type<>(Bridge.id("tps_reply"));
 
     private static final long[] UNLOADED = new long[]{0};
 

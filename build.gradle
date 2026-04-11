@@ -2,13 +2,12 @@ plugins {
     id 'java-library'
     id 'idea'
     id 'maven-publish'
-    id 'net.neoforged.moddev' version '2.0.134'
+    id 'net.neoforged.moddev' version '2.0.141'
     id "me.modmuss50.mod-publish-plugin" version "1.1.0"
     id "dev.nanite.plugins.insaniam" version "0.2.1-SNAPSHOT"
 }
 
 version = mod_version
-version = insaniamUtils.createModVersion()
 group = mod_group_id
 
 insaniam {
@@ -30,15 +29,10 @@ base {
     archivesName = mod_id
 }
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+java.toolchain.languageVersion = JavaLanguageVersion.of(25)
 
 neoForge {
     version = project.neo_version
-
-    parchment {
-        mappingsVersion = project.parchment_mappings_version
-        minecraftVersion = project.parchment_minecraft_version
-    }
 
     // This line is optional. Access Transformers are automatically detected
     // accessTransformers.add('src/main/resources/META-INF/accesstransformer.cfg')
@@ -86,9 +80,6 @@ configurations {
 
 repositories {
     mavenCentral()
-    maven {
-        url = "https://libraries.minecraft.net/"
-    }
 }
 
 dependencies {

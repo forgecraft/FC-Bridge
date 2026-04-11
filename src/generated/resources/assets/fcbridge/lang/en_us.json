@@ -10,8 +10,8 @@
   "fc.bridge.commands.spectator.enter": "%s is now in spectator mode",
   "fc.bridge.commands.spectator.exit": "%s is no longer in spectator mode",
   "fc.bridge.commands.sudo.not_allowed": "You are not allowed to use [%s] with sudo",
-  "fc.bridge.gui.toggle_advancement_toasts": "Toggle Advancement Toasts",
-  "fc.bridge.gui.toggle_recipe_toasts": "Toggle Recipe Toasts",
+  "fc.bridge.gui.toggle_advancement_toasts": "Disable Advancement Toasts",
+  "fc.bridge.gui.toggle_recipe_toasts": "Disable Recipe Toasts",
   "fc.bridge.toast.launch_time": "%s seconds",
   "fc.bridge.toast.launch_time.title": "Launched in",
   "sidebar_button.fcbridge.tps": "TPS"

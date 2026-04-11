@@ -5,7 +5,7 @@ import net.forgecraft.mods.bridge.client.screens.TPSScreen.TPSInformationList.En
 import net.forgecraft.mods.bridge.network.TPSPacket;
 import net.forgecraft.mods.bridge.structs.TickTimeHolder;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.ObjectSelectionList;
@@ -118,8 +118,8 @@ public class TPSScreen extends Screen {
     }
 
     @Override
-    public void render(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
-        super.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
+    public void extractRenderState(GuiGraphicsExtractor pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
+        super.extractRenderState(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
 
         // Every second, use the render method to request new data
         if (Instant.now().getEpochSecond() - lastRequest.getEpochSecond() >= 1) {
@@ -247,9 +247,9 @@ public class TPSScreen extends Screen {
             }
 
             @Override
-            public void renderContent(GuiGraphics guiGraphics, int mouseX, int mouseY, boolean hovering, float partialTick) {
+            public void extractContent(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, boolean hovering, float partialTick) {
 //                top += 1; // Add a bit more padding
-                guiGraphics.drawCenteredString(TPSScreen.this.font, Component.literal("No data"), TPSScreen.this.width / 2, this.getContentY(), 0xFFFFFF);
+                guiGraphics.centeredText(TPSScreen.this.font, Component.literal("No data"), TPSScreen.this.width / 2, this.getContentY(), 0xFFFFFF);
             }
         }
 
@@ -286,17 +286,17 @@ public class TPSScreen extends Screen {
             }
 
             @Override
-            public void renderContent(GuiGraphics guiGraphics, int mouseX, int mouseY, boolean hovering, float partialTick) {
+            public void extractContent(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, boolean hovering, float partialTick) {
                 int top = this.getContentY();
                 int left = this.getContentX();
 
                 top += 1; // Add a bit more padding
                 final FormattedText text = TPSScreen.this.font.ellipsize(locationComponent, DIMENSION_NAME_WIDTH);
-                guiGraphics.drawString(TPSScreen.this.font, Language.getInstance().getVisualOrder(text), left, top, 0xFFFFFFFF);
+                guiGraphics.text(TPSScreen.this.font, Language.getInstance().getVisualOrder(text), left, top, 0xFFFFFFFF);
                 left += DIMENSION_NAME_WIDTH + COLUMN_GAP;
-                guiGraphics.drawString(TPSScreen.this.font, meanTickTimeComponent, left, top, 0xFFFFFFFF);
+                guiGraphics.text(TPSScreen.this.font, meanTickTimeComponent, left, top, 0xFFFFFFFF);
                 left += MEAN_TICK_TIME_WIDTH + COLUMN_GAP;
-                guiGraphics.drawString(TPSScreen.this.font, meanTPSComponent, left, top, 0xFFFFFFFF);
+                guiGraphics.text(TPSScreen.this.font, meanTPSComponent, left, top, 0xFFFFFFFF);
             }
         }
     }

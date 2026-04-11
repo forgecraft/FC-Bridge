@@ -1,16 +1,11 @@
 package net.forgecraft.mods.bridge.storage;
 
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.forgecraft.mods.bridge.Bridge;
 import net.forgecraft.mods.bridge.structs.DimensionalPos;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.UUIDUtil;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.NbtUtils;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.saveddata.SavedDataType;
@@ -18,7 +13,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.UUID;
 
 public class ServerStorage extends SavedData {
@@ -29,7 +23,7 @@ public class ServerStorage extends SavedData {
     ).apply(instance, ServerStorage::new));
 
     private static final SavedDataType<ServerStorage> TYPE = new SavedDataType<>(
-            "fcbridge_global_data",
+            Bridge.id("global_data"),
             ServerStorage::new,
             CODEC
     );

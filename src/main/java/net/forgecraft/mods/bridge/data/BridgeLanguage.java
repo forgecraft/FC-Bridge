@@ -12,8 +12,8 @@ public class BridgeLanguage extends LanguageProvider {
 
     @Override
     protected void addTranslations() {
-        gui("toggle_recipe_toasts", "Toggle Recipe Toasts");
-        gui("toggle_advancement_toasts", "Toggle Advancement Toasts");
+        gui("toggle_recipe_toasts", "Disable Recipe Toasts");
+        gui("toggle_advancement_toasts", "Disable Advancement Toasts");
 
         prefixed("toast.launch_time.title", "Launched in");
         prefixed("toast.launch_time", "%s seconds");
