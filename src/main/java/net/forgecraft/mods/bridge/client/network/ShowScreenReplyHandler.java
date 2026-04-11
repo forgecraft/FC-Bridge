@@ -1,7 +1,6 @@
 package net.forgecraft.mods.bridge.client.network;
 
 import net.forgecraft.mods.bridge.client.screens.ClientSettingsScreen;
-import net.forgecraft.mods.bridge.client.screens.ScreenTypeScreenMap;
 import net.forgecraft.mods.bridge.client.screens.TPSScreen;
 import net.forgecraft.mods.bridge.structs.ScreenType;
 import net.forgecraft.mods.bridge.network.ShowScreenPacket;

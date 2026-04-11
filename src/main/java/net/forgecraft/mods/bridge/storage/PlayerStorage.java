@@ -2,6 +2,7 @@ package net.forgecraft.mods.bridge.storage;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.forgecraft.mods.bridge.Bridge;
 import net.forgecraft.mods.bridge.storage.player.PlayerData;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.server.MinecraftServer;
@@ -22,7 +23,7 @@ public class PlayerStorage extends SavedData {
     ).apply(instance, PlayerStorage::new));
 
     private static final SavedDataType<PlayerStorage> TYPE = new SavedDataType<>(
-            "fcbridge_player_data",
+            Bridge.id("player_data"),
             PlayerStorage::new,
             CODEC
     );

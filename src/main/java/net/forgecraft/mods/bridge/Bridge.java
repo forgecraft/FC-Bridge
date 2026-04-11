@@ -78,7 +78,7 @@ public class Bridge {
         return fcDataDir;
     }
 
-    public static Identifier location(String path) {
+    public static Identifier id(String path) {
         return Identifier.fromNamespaceAndPath(MODID, path);
     }
 }

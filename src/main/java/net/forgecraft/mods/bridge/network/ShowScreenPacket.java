@@ -10,7 +10,7 @@ import net.neoforged.neoforge.network.codec.NeoForgeStreamCodecs;
 public record ShowScreenPacket(
         ScreenType screenType
 ) implements CustomPacketPayload {
-    public static final Type<ShowScreenPacket> TYPE = new Type<>(Bridge.location("show_screen"));
+    public static final Type<ShowScreenPacket> TYPE = new Type<>(Bridge.id("show_screen"));
 
     public static final StreamCodec<FriendlyByteBuf, ShowScreenPacket> CODEC = StreamCodec.composite(
             NeoForgeStreamCodecs.enumCodec(ScreenType.class),

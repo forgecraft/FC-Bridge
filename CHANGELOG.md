@@ -1,3 +1,7 @@
+## [26.1.2.1]
+
+- Updated to Minecraft 26.1+
+
 ## [21.11.0]
 
 ### Changed
