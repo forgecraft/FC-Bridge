@@ -3,7 +3,7 @@
     "fcbridge:textures/gui/tps_icon.png"
   ],
   "click": [
-    "command:/fc dev show TPS"
+    "command:/fc tps"
   ],
   "required_mods": [
     "fcbridge"
