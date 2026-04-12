@@ -242,6 +242,13 @@ public enum DescriptionUpdater {
             return;
         }
 
+        // Write the new hash to the file
+        try {
+            Files.writeString(hashPath, newHash);
+        } catch (IOException e) {
+            LOGGER.error("Failed to write mod list hash", e);
+        }
+
         sendDiscordReq("/channels/" + modListChannelId + "/messages", "POST", Map.of(
                 "content", "## Mods pushed to server.\n\nAny mods after this message have not yet been pushed to the server",
                 "flags", 1 << 2 // Suppress embeds and notifications
