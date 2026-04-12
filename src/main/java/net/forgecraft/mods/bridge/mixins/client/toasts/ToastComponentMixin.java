@@ -37,5 +37,11 @@ public class ToastComponentMixin {
         if (toast instanceof AdvancementToast && ClientConfig.DISABLE_ADVANCEMENT_TOAST.get()) {
             ci.cancel();
         }
+
+        if (toast instanceof SystemToast systemToast) {
+            if (systemToast.getToken() == SystemToast.SystemToastId.UNSECURE_SERVER_WARNING) {
+                ci.cancel();
+            }
+        }
     }
 }

@@ -13,5 +13,9 @@ public class ClientConfig {
             .comment("Disables advancement toasts from showing when advancements are achieved")
             .define("alterations.toasts.disableAdvancementToast", true);
 
+    public static final ModConfigSpec.BooleanValue DISABLE_UNSECURE_SERVER_TOAST = BUILDER
+            .comment("Disables unsecure servers toasts from showing when joining a server that isn't able to secure chat messages")
+            .define("alterations.toasts.disableUnsecureServerToast", true);
+
     public static final ModConfigSpec SPEC = BUILDER.build();
 }
