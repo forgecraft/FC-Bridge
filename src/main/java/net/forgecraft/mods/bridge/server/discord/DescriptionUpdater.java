@@ -1,5 +1,6 @@
 package net.forgecraft.mods.bridge.server.discord;
 
+import com.google.common.hash.Hashing;
 import net.forgecraft.mods.bridge.config.CommonConfig;
 import com.google.gson.Gson;
 import net.neoforged.fml.ModList;
@@ -16,7 +17,9 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -34,7 +37,8 @@ public enum DescriptionUpdater {
     }
 
     private void onServerStarted(ServerStartedEvent event) {
-        this.updateDescription();
+        event.getServer().execute(this::updateDescription);
+        event.getServer().execute(this::updateModListChannel);
     }
 
     private void updateDescription() {
@@ -195,5 +199,52 @@ public enum DescriptionUpdater {
 
     private static String bold(String text) {
         return "**" + text + "**";
+    }
+
+    private void updateModListChannel() {
+        String modListChannelId = CommonConfig.DISCORD_MODS_CHANNEL_ID.get();
+        if (modListChannelId.isEmpty()) {
+            LOGGER.info("Discord mod list channel ID is empty, cannot update mod list channel");
+            return;
+        }
+
+        var lastHash = "";
+        Path hashPath = FMLPaths.GAMEDIR.get().resolve(".modlist_hash");
+        if (Files.exists(hashPath)) {
+            try {
+                lastHash = Files.readString(hashPath);
+            } catch (IOException e) {
+                LOGGER.error("Failed to read mod list hash", e);
+            }
+        }
+
+        var newHash = "";
+        var modsPath = FMLPaths.MODSDIR.get();
+        try (var filesStream = Files.walk(modsPath)) {
+            var hashBuilder = new StringBuilder();
+            for (Path path : filesStream.toList()) {
+                var fileSize = Files.size(path);
+                var lastModified = Files.getLastModifiedTime(path).toMillis();
+                hashBuilder.append(path.getFileName().toString()).append(fileSize).append(lastModified);
+            }
+            newHash = Hashing.sha256().hashString(hashBuilder.toString(), StandardCharsets.UTF_8).toString();
+        } catch (IOException e) {
+            LOGGER.error("Failed to read mods directory", e);
+        }
+
+        if (newHash.isEmpty()) {
+            LOGGER.error("Failed to compute mod list hash, skipping mod list channel update");
+            return;
+        }
+
+        if (newHash.equals(lastHash)) {
+            LOGGER.info("Mod list has not changed, skipping mod list channel update");
+            return;
+        }
+
+        sendDiscordReq("/channels/" + modListChannelId + "/messages", "POST", Map.of(
+                "content", "## Mods pushed to server.\n\nAny mods after this message have not yet been pushed to the server",
+                "flags", 1 << 2 // Suppress embeds and notifications
+        ));
     }
 }

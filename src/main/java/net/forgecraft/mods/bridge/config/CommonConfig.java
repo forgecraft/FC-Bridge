@@ -31,6 +31,10 @@ public class CommonConfig {
             .comment("The channel ID for the Discord bot")
             .define("discord.channel_id", "");
 
+    public static ModConfigSpec.ConfigValue<String> DISCORD_MODS_CHANNEL_ID = BUILDER
+            .comment("The channel ID for the Discord bot")
+            .define("discord.mods_channel_id", "");
+
     public static ModConfigSpec.ConfigValue<String> DISCORD_CONNECT_IP = BUILDER
             .comment("The IP address to connect to the Discord bot")
             .define("discord.connect_using", "one.forgecraft.net");
