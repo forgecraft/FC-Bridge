@@ -20,6 +20,7 @@ import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -218,19 +219,20 @@ public enum DescriptionUpdater {
             }
         }
 
-        var newHash = "";
-        var modsPath = FMLPaths.MODSDIR.get();
-        try (var filesStream = Files.walk(modsPath)) {
-            var hashBuilder = new StringBuilder();
-            for (Path path : filesStream.toList()) {
-                var fileSize = Files.size(path);
-                var lastModified = Files.getLastModifiedTime(path).toMillis();
-                hashBuilder.append(path.getFileName().toString()).append(fileSize).append(lastModified);
-            }
-            newHash = Hashing.sha256().hashString(hashBuilder.toString(), StandardCharsets.UTF_8).toString();
-        } catch (IOException e) {
-            LOGGER.error("Failed to read mods directory", e);
-        }
+        var modFiles = this.modFiles();
+        var hashInput = modFiles.stream()
+                .map(path -> {
+                    try {
+                        var fileSize = Files.size(path);
+                        var lastModified = Files.getLastModifiedTime(path).toMillis();
+                        return path.getFileName().toString() + fileSize + lastModified;
+                    } catch (IOException e) {
+                        LOGGER.error("Failed to read mod file info", e);
+                        return "";
+                    }
+                })
+                .reduce("", String::concat);
+        var newHash = Hashing.sha256().hashString(hashInput, StandardCharsets.UTF_8).toString();
 
         if (newHash.isEmpty()) {
             LOGGER.error("Failed to compute mod list hash, skipping mod list channel update");
@@ -253,5 +255,30 @@ public enum DescriptionUpdater {
                 "content", "## Mods pushed to server.\n\nAny mods after this message have not yet been pushed to the server",
                 "flags", 1 << 2 // Suppress embeds and notifications
         ));
+    }
+
+    private static final List<Path> MOD_DIRS = List.of(
+            FMLPaths.MODSDIR.get(),
+            FMLPaths.GAMEDIR.get().resolve("spl/servermods"),
+            FMLPaths.GAMEDIR.get().resolve("spl/server-mods"),
+            FMLPaths.GAMEDIR.get().resolve("spl/clientmods"),
+            FMLPaths.GAMEDIR.get().resolve("spl/client-mods")
+    );
+
+    private List<Path> modFiles() {
+        List<Path> modFiles = new ArrayList<>();
+        for (Path modDir : MOD_DIRS) {
+            if (!Files.exists(modDir) || !Files.isDirectory(modDir)) {
+                continue;
+            }
+
+            try (var filesStream = Files.walk(modDir)) {
+                modFiles.addAll(filesStream.filter(Files::isRegularFile).toList());
+            } catch (IOException e) {
+                LOGGER.error("Failed to read mods directory", e);
+            }
+        }
+
+        return modFiles;
     }
 }

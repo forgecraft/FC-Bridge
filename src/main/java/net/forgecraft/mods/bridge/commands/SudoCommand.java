@@ -24,7 +24,8 @@ public class SudoCommand {
 
     public static LiteralArgumentBuilder<CommandSourceStack> register() {
         return Commands.literal("sudo")
-                .then(Commands.argument("command", StringArgumentType.greedyString()).suggests(SudoCommand::suggester)
+                .then(Commands.argument("command", StringArgumentType.greedyString())
+                        .suggests(SudoCommand::suggester)
                         .executes(SudoCommand::executeCommand));
     }
 
