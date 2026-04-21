@@ -1,3 +1,8 @@
+## [26.1.2.5]
+
+### Fixed
+* Description Updater didn't take `spl` common folders into account.
+
 ## [26.1.2.1]
 
 - Updated to Minecraft 26.1+
